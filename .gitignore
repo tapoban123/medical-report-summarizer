@@ -1,0 +1,8 @@
+# cache
+__pycache__/
+
+# secrets
+.env
+
+# test data
+MS_KRITE_CHOUHAN_PFT_GRAPH.pdf
