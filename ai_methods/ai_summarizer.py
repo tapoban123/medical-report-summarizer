@@ -18,21 +18,24 @@ def process_document(document: str):
     llm = get_llm()
     loader = PDFPlumberLoader(file_path=document)
     docs = loader.load()
+    
+    report_data = docs[0].page_content
 
-    page2 = docs[1].page_content.splitlines()
-    modified_content = []
+    if len(docs) > 1:
+        page2 = docs[1].page_content.splitlines()
+        modified_content = []
 
-    for line in page2:
-        if line.startswith("PRE") or line.startswith("POST"):
-            continue
-        modified_content.append(line)
+        for line in page2:
+            if line.startswith("PRE") or line.startswith("POST"):
+                continue
+            modified_content.append(line)
+        
+        report_data += "\n".join(modified_content)
 
     template = PromptTemplate(
         template="{report_data}\n\nGenerate a detailed medical report on the given image along with a short summary for the doctor without including clinical language. An Interpretation section must be included with the report.",
         input_variables=["report_data"],
     )
-
-    report_data = docs[0].page_content + "\n".join(modified_content)
 
     chain = template | llm
 
